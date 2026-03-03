@@ -18,7 +18,7 @@
   "author": "CrashedProgram",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=22.12.0"
   },
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
