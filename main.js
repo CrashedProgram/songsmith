@@ -16,7 +16,7 @@ class SongsmithBot {
         
         this.musicPlayer = new MusicPlayer();
         this.commandHandler = new CommandHandler(this.musicPlayer);
-        this.rest = new REST({ version: '10' }).setToken(process.env.token);
+        this.rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
         
         this.setupEventHandlers();
     }
@@ -63,7 +63,7 @@ class SongsmithBot {
     async start() {
         try {
             await this.registerCommands();
-            await this.client.login(process.env.token);
+            await this.client.login(process.env.TOKEN);
         } catch (error) {
             console.error('❌ Failed to start bot:', error);
             process.exit(1);
