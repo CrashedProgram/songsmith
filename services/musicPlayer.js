@@ -1,6 +1,7 @@
 const { createAudioResource, StreamType, joinVoiceChannel, createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
 const { createReadStream } = require('fs');
 const path = require('path');
+const fadeOut = require('./fadeout');
 
 class MusicPlayer {
     constructor() {
@@ -10,6 +11,7 @@ class MusicPlayer {
         this.lastFile = null;
         this.loopEnabled = false;
         this.connection = null;
+        this.currentResource = null;
         
         this.player.on(AudioPlayerStatus.Idle, () => {
             console.log('Audio finished, playing next...');
@@ -71,6 +73,7 @@ class MusicPlayer {
                 inlineVolume: true
             });
             
+            this.currentResource = resource;
             this.player.play(resource);
             console.log(`Now playing: ${filename}`);
         } catch (error) {
@@ -92,7 +95,36 @@ class MusicPlayer {
         this.isPlaying = false;
         this.loopEnabled = false;
         this.lastFile = null;
+        this.currentResource = null;
         this.player.stop();
+    }
+
+    /**
+     * Fades out the current track then either advances to the next song or stops.
+     * @param {object} [options] - Options forwarded to the fadeout module (duration, steps).
+     * @returns {Promise<boolean>} true if fade was performed, false if nothing was playing.
+     */
+    async fadeOutCurrent(options) {
+        if (!this.isPlaying || !this.currentResource) {
+            return false;
+        }
+
+        try {
+            await fadeOut(this.currentResource, options);
+        } catch (error) {
+            console.error('Fade-out error:', error);
+        }
+
+        this.currentResource = null;
+
+        // If the queue has more songs, skip to next; otherwise stop completely.
+        if (this.queue.length > 0) {
+            this.player.stop(); // triggers Idle -> playNext
+        } else {
+            this.stop();
+        }
+
+        return true;
     }
     
     quit() {
