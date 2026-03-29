@@ -1,6 +1,6 @@
 {
   "name": "songsmith",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A clean, organized Discord music bot for playing sound files",
   "main": "main.js",
   "scripts": {
